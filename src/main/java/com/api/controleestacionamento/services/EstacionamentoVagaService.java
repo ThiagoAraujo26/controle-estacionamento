@@ -5,6 +5,10 @@ import com.api.controleestacionamento.repositories.EstacionamentoVagaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 public class EstacionamentoVagaService {
 
@@ -30,5 +34,18 @@ public class EstacionamentoVagaService {
 
     public boolean existsByApartamentoAndBloco(String apartamento, String bloco) {
         return estacionamentoVagaRepository.existsByApartamentoAndBloco(apartamento, bloco);
+    }
+
+    public List<EstacionamentoVagaModel> findAll() {
+        return estacionamentoVagaRepository.findAll();
+    }
+
+    public Optional<EstacionamentoVagaModel> findById(UUID id) {
+        return  estacionamentoVagaRepository.findById(id);
+    }
+
+    @Transactional
+    public void delete(EstacionamentoVagaModel estacionamentoVagaModel) {
+        estacionamentoVagaRepository.delete(estacionamentoVagaModel);
     }
 }

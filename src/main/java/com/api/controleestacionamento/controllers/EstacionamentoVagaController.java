@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -38,6 +41,30 @@ public class EstacionamentoVagaController {
         BeanUtils.copyProperties(estacionamentoVagaDto, estacionamentoVagaModel);
         estacionamentoVagaModel.setRegistroData(LocalDateTime.now(ZoneId.of("UTC")));
         return ResponseEntity.status(HttpStatus.CREATED).body(estacionamentoVagaService.save(estacionamentoVagaModel));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<EstacionamentoVagaModel>> getAllEstacionamentoVagas(){
+        return ResponseEntity.status(HttpStatus.OK).body(estacionamentoVagaService.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getOneEstacionamentoVaga(@PathVariable(value = "id") UUID id){
+        Optional<EstacionamentoVagaModel> estacionamentoVagaModelOptional = estacionamentoVagaService.findById(id);
+        if (!estacionamentoVagaModelOptional.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vaga de Estacionamento não encontrada.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(estacionamentoVagaModelOptional.get());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteEstacionamentoVaga(@PathVariable(value = "id") UUID id){
+    Optional<EstacionamentoVagaModel> estacionamentoVagaModelOptional = estacionamentoVagaService.findById(id);
+        if (!estacionamentoVagaModelOptional.isPresent()){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vaga de Estacionamento não encontrada.");
+    }
+        estacionamentoVagaService.delete(estacionamentoVagaModelOptional.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Vaga de estacionamento deletada com sucesso.");
     }
 
 
