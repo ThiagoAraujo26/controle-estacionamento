@@ -59,7 +59,7 @@ public class EstacionamentoVagaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteEstacionamentoVaga(@PathVariable(value = "id") UUID id){
-    Optional<EstacionamentoVagaModel> estacionamentoVagaModelOptional = estacionamentoVagaService.findById(id);
+        Optional<EstacionamentoVagaModel> estacionamentoVagaModelOptional = estacionamentoVagaService.findById(id);
         if (!estacionamentoVagaModelOptional.isPresent()){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vaga de Estacionamento não encontrada.");
     }
@@ -67,5 +67,18 @@ public class EstacionamentoVagaController {
         return ResponseEntity.status(HttpStatus.OK).body("Vaga de estacionamento deletada com sucesso.");
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateEstacionamentoVaga(@PathVariable(value = "id") UUID id,
+                                                           @RequestBody @Valid EstacionamentoVagaDto estacionamentoVagaDto){
+        Optional<EstacionamentoVagaModel> estacionamentoVagaModelOptional = estacionamentoVagaService.findById(id);
+        if (!estacionamentoVagaModelOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vaga de Estacionamento não encontrada.");
+        }
+        var estacionamentoVagaModel = new EstacionamentoVagaModel();
+        BeanUtils.copyProperties(estacionamentoVagaDto, estacionamentoVagaModel);
+        estacionamentoVagaModel.setId(estacionamentoVagaModelOptional.get().getId());
+        estacionamentoVagaModel.setRegistroData(estacionamentoVagaModelOptional.get().getRegistroData());
+        return ResponseEntity.status(HttpStatus.OK).body(estacionamentoVagaService.save(estacionamentoVagaModel));
+    }
 
 }
